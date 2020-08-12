@@ -2,5 +2,6 @@ FROM node:12-alpine
 
 WORKDIR /calc
 ADD . .
+COPY package-lock.json package.json ./
 RUN npm ci 
 CMD [ "npm", "start" ]
