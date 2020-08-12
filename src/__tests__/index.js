@@ -51,7 +51,7 @@ const path = require("path");
     await page.click('#yeah9')
     await page.click('#yeah9')
     await page.tracing.stop();
-    await browser.close();
     */
-    await browser.close();
+   await browser.close();
+   process.exit(1);
 })();
