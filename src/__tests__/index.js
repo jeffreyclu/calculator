@@ -11,7 +11,7 @@ beforeEach(async () => {
   page = await browser.newPage();
 
   // If tests need different root or url then we need to put this inside the tests
-  const url = "http://webapp:3000/calculator"
+  const url = "http://localhost:3000/calculator"
   const rootId = "#root"
   await reactPinpoint.recordTest(page, url, rootId)
 })

@@ -31,8 +31,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      uses: actions/checkout@v2
-      run: docker-compose-up --build --abort-on-container-exit`;
+    - uses: actions/checkout@v2
+    - name: ${actionName}
+      run: docker-compose up --build --abort-on-container-exit`
 };
 
 /**
