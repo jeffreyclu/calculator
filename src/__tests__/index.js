@@ -1,57 +1,71 @@
-console.log("yeah, this is the mvp!!");
-
 const puppeteer = require("puppeteer");
-const path = require("path");
+const reactPinpoint = require('react-pinpoint');
 
-(async () => {
-  const browser = await puppeteer.launch({
+let browser, page
+
+
+beforeEach(async () => {
+  browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-  const page = await browser.newPage();
+  page = await browser.newPage();
 
-  // Set an empty object on devtools hook so react will record fibers
-  // Must exist before react runs
-  await page.evaluateOnNewDocument(
-    () => (window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {}),
-  );
-  console.log("got here though");
+  // If tests need different root or url then we need to put this inside the tests
+  const url = "http://webapp:3000/calculator"
+  const rootId = "#root"
+  await reactPinpoint.recordTest(page, url, rootId)
+})
 
-  await page.goto("http://web:3000/calculator");
 
-  console.log("we in boys");
 
-  // testing adding react-pinpoint via a script tag
-  await page.addScriptTag({
-    path: path.join(__dirname, "utils.js"),
-  });
+afterEach(async () => {
+  const slowRenders = await reactPinpoint.reportTestResults(page, 16)
+  console.log("Slow Renders:", slowRenders);
+  await browser.close();
+})
 
-  await page.evaluate(() => {
-    const root = document.querySelector("#root");
-    mountToReactRoot(root);
-  });
 
+
+test("999 displays", async () => {
   await page.click("#yeah9");
   await page.click("#yeah9");
   await page.click("#yeah9");
 
-  const slowRenders = await page.evaluate(async () => {
-    console.log("changes->", changes);
-    console.log("slow renders->", getAllSlowComponentRenders(0, changes));
-    return getAllSlowComponentRenders(0, changes);
-  });
+  const value = await page.evaluate(() => {
+    const element = document.querySelector(".component-display>div")
+    return element.textContent
+  })
 
-  console.log("YEAH->", slowRenders);
+  expect(value).toBe("999")
+})
 
-  /* tracing using chrome dev tools
-    await page.tracing.start({path: 'trace.json'});
-    await page.goto('http://localhost:3000');
-    await page.click('#yeah9')
-    await page.click('#yeah9')
-    await page.click('#yeah9')
-    await page.click('#yeah9')
-    await page.click('#yeah9')
-    await page.tracing.stop();
-    */
-   await browser.close();
-   process.exit(1);
-})();
+
+// test("666 displays", async () => {
+//   await page.click("#yeah6");
+//   await page.click("#yeah6");
+//   await page.click("#yeah6");
+
+//   const value = await page.evaluate(() => {
+//     const element = document.querySelector(".component-display>div")
+//     return element.textContent
+//   })
+
+//   expect(value).toBe("666")
+// })
+
+
+
+// test("Test add", async () => {
+//   await page.click("#yeah9");
+//   await page.click("#yeah\\+");
+//   await page.click("#yeah9");
+//   await page.click("#yeah\\=");
+
+//   const value = await page.evaluate(() => {
+//     const element = document.querySelector(".component-display>div")
+//     return element.textContent
+//   })
+
+//   expect(value).toBe("18")
+
+// })

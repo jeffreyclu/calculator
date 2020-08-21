@@ -3,15 +3,15 @@ services:
   tests:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: "wait-for-it.sh web:3000 -- npm test"
+      dockerfile: Dockerfile.test
+    command: bash -c "wait-for-it.sh webapp:3000 && npm test"
     links:
-      - web
-  web:
+      - webapp
+  webapp:
     build:
       context: .
-      dockerfile: Dockerfile.calculator
-    command: "npm start"
+      dockerfile: Dockerfile.app
+    command: npm start
     tty: true
     expose:
       - "3000"

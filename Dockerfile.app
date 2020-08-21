@@ -1,7 +1,5 @@
 FROM node:12-alpine
-
-WORKDIR /calc
-ADD . .
+WORKDIR /app
 COPY package-lock.json package.json ./
-RUN npm ci 
-CMD [ "npm", "start" ]
+RUN npm ci
+COPY . .
