@@ -5,4 +5,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: docker-compose-up --build --abort-on-container-exit
+      run: docker-compose-up --build --abort-on-container-exit
